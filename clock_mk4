@@ -15,6 +15,8 @@ Based on Espruino firmware by Gordon Williams
 var controls = require("ble_hid_controls");
 NRF.setServices(undefined, { hid : controls.report });
 
+var SWBtn =require("https://raw.githubusercontent.com/muet/EspruinoDocs/master/modules/SWButton.js");
+
 var dg1 = D19;
 var dg2 = D18;
 var A = D17;
@@ -771,27 +773,16 @@ setWatch(function(e) {
   }
     //setDeepSleep(1);
 }, up, {repeat: true, debounce: 50, edge: "rising"});
-
-var musicControl = new SWBtn(function(k){
-      if (k === "S"  )
-        controls.playpause();
-      else if (k === "SS" ) 
-        controls.next();
-      else if (k === "SS" ) 
-        controls.previous();
-});
 */
 
 setWatch(function(e) {
   var len = e.time - e.lastTime;
-  if (len >= 0.3) {
+  if (len > 0.3) {
     controls.next();
   } else {
     controls.playpause();
   }
 }, right, { edge:"rising",repeat:true,debounce:50});
-
-
 
 function onInit() {
   data();

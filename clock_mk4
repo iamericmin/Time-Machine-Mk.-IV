@@ -12,11 +12,6 @@ Based on Espruino firmware by Gordon Williams
 
 */
 
-var controls = require("ble_hid_controls");
-NRF.setServices(undefined, { hid : controls.report });
-
-var SWBtn =require("https://raw.githubusercontent.com/muet/EspruinoDocs/master/modules/SWButton.js");
-
 var dg1 = D19;
 var dg2 = D18;
 var A = D17;
@@ -776,13 +771,17 @@ setWatch(function(e) {
 */
 
 setWatch(function(e) {
-  var len = e.time - e.lastTime;
-  if (len > 0.3) {
-    controls.next();
-  } else {
-    controls.playpause();
+  var isLong = 2 > (e.time - e.lastTime) >= 1;
+  var isLonger = (e.time - e.lastTime) >= 2;
+  if (isLong) {
+    NRF.disconnect();
+    NRF.stop();
+    //setDeepSleep(1);
+  } else if (isLonger) {
+    NRF.wake();
+    //setDeepSleep(1);
   }
-}, right, { edge:"rising",repeat:true,debounce:50});
+}, right, {repeat: true, edge: 'rising', debounce: 50});
 
 function onInit() {
   data();

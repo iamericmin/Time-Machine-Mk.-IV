@@ -12,9 +12,6 @@ Based on Espruino firmware by Gordon Williams
 
 */
 
-var controls = require("ble_hid_controls");
-NRF.setServices(undefined, { hid : controls.report });
-
 var dg1 = D19;
 var dg2 = D18;
 var A = D17;
@@ -677,60 +674,94 @@ function flashlight(state) {
   }
 }
 
+function beep(f) { 
+  if (f===0) digitalWrite(spk,0);
+  else analogWrite(spk, 0.5, { freq: f } );
+}
+
+function buttonBoop(f) {
+  beep(f);
+  setTimeout(function() {digitalWrite(spk, 0);}, 50);
+}
+
 function breathe(state) {
   let ledBrightness = 0;
   let ledPin = l5;
   let fadeIn = false;
-
   function fadeLED() {
-    if ((ledBrightness <= 0) || (ledBrightness >= 0.5)) {
-      fadeIn = !fadeIn;
-    }
+   if((ledBrightness <= 0) || (ledBrightness >= 1)){
+     fadeIn = !fadeIn;
+   }
 
     setLedBrightness(fadeIn);
   }
-
-  function setLedBrightness(fadeIn) {
-    if (fadeIn) {
+  function setLedBrightness(fadeIn){
+      if(fadeIn){
       ledBrightness += 0.01;
-    } else {
-      ledBrightness -= 0.01;
+    }
+    else {
+      ledBrightness -=0.01;
     }
 
-    analogWrite(ledPin, ledBrightness, {
-      soft: true
-    });
+    analogWrite(ledPin, ledBrightness);
   }
+  
   if (state === true || state == 1) {
     clearInterval();
-    setInterval(fadeLED, 70);
+    setInterval(fadeLED, 40);
   } else if (state === false || state === 0) {
     clearInterval();
-    digitalWrite(B3, 0);
+    digitalWrite(ledPin, 0);
   }
+}
+
+function bootAnim() {
+  delay = 50;
+  ledBrightness = 0;
+  setTimeout(allClear, 1500);
+  while (ledBrightness <= 1) {
+    analogWrite(l1, ledBrightness);
+    analogWrite(l2, ledBrightness);
+    analogWrite(l3, ledBrightness);
+    analogWrite(l4, ledBrightness);
+    analogWrite(l5, ledBrightness);
+    digitalPulse(D3, 0, 25);
+  }
+  allClear();
 }
 
 pinMode(left, 'input_pullup');
 pinMode(select, 'input_pullup');
 pinMode(right, 'input_pullup');
 
+/*
+setWatch(function(e) {
+  buttonBoop(650);
+}, select, {repeat: true, debounce: 50, edge: "falling"});
+
+setWatch(function(e) {
+  buttonBoop(950);
+}, select, {repeat: true, debounce: 50, edge: "rising"});
+*/
+
 setWatch(function(e) {
   data();
+  buttonBoop(650);
   while (digitalRead(select) != 1) {
     display(1, hourFirstDigit);
     display(2, hourSecondDigit);
   }
-    allClear();
+  allClear();
 }, select, {repeat: true, debounce: 50, edge: "falling"});
 
 setWatch(function(e) {
   data();
+  buttonBoop(950);
   for (i = 0; i < 30; i++) {
     display(1, minFirstDigit);
     display(2, minSecondDigit);
   }
     allClear();
-    //setDeepSleep(1);
 }, select, {repeat: true, debounce: 50, edge: "rising"});
 
 /*
@@ -771,27 +802,20 @@ setWatch(function(e) {
   }
     //setDeepSleep(1);
 }, up, {repeat: true, debounce: 50, edge: "rising"});
-
-var musicControl = new SWBtn(function(k){
-      if (k === "S"  )
-        controls.playpause();
-      else if (k === "SS" ) 
-        controls.next();
-      else if (k === "SS" ) 
-        controls.previous();
-});
 */
 
 setWatch(function(e) {
-  var len = e.time - e.lastTime;
-  if (len >= 0.3) {
-    controls.next();
-  } else {
-    controls.playpause();
+  var isLong = 2 > (e.time - e.lastTime) >= 1;
+  var isLonger = (e.time - e.lastTime) >= 2;
+  if (isLong) {
+    NRF.disconnect();
+    NRF.stop();
+    //setDeepSleep(1);
+  } else if (isLonger) {
+    NRF.wake();
+    //setDeepSleep(1);
   }
-}, right, { edge:"rising",repeat:true,debounce:50});
-
-
+}, right, {repeat: true, edge: 'rising', debounce: 50});
 
 function onInit() {
   data();

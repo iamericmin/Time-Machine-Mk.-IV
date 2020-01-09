@@ -1,5 +1,5 @@
 # Time Machine Mk. IV
-# Full write-up is on my website!
+# [Full write-up is on my website!](https://iamericmin.github.io/tm4.html)
 ![Peekaboo!](https://i.imgur.com/piJYHc0.jpg)
 ## homebrew "smart"watch with BLE radio
 

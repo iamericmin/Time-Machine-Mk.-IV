@@ -11,7 +11,7 @@ I am Eric Min and I'm a 18 year old teenager from Seoul, South Korea. This is my
 # THE JUICY STUFF:
 -   PROCESSOR: nRF52832 Soc. 64MHz ARM cortex M4 with 64k RAM and 512k flash.
 -   FIRMWARE: Espruino JS interpreter + JS code layer
--   POWER: 12mm coin-cell battery. About a week of battery life.
+-   POWER: 12mm CR1225 coin cell battery. About two weeks of battery life.
 -   DISPLAY: If you can call it a display. Dual 7-segment LEDs with five auxiliary LEDs.
 -   INPUT: Triple momentary tactile switches.
 -   SOUND: Mini piezo speaker.

@@ -1,7 +1,7 @@
 # Time Machine Mk. IV
 # [Full write-up is on my website!](https://iamericmin.github.io/tm4.html)
 ![Peekaboo!](https://i.imgur.com/piJYHc0.jpg)
-## homebrew Cortex M4 "smart"watch with BLE radio
+## Homebrew cyberpunk Cortex M4 "smart"watch with BLE radio
 
 Project status: all bugs not fixed before January 1st 2020 are now officially features
 
